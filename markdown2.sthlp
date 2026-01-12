@@ -34,6 +34,8 @@
 {synopt :{opt rep:lace}}overwrite existing output files{p_end}
 {synopt :{opt css(url)}}specify custom CSS file for HTML styling{p_end}
 {synopt :{opt rpath(string)}}specify the base path to convert absolute paths to relative{p_end}
+{synopt :{opt wpath(string)}}specify the web URL to replace the base path specified in {opt rpath()}{p_end}
+{synopt :{opt clean}}only title, table and figure{p_end}
 {synoptline}
 {p2colreset}{...}
 {p 4 6 2}
@@ -74,6 +76,12 @@ The command performs the following tasks:
 
 {phang}
 {opt rpath(string)} specifies the base directory path that should be converted to relative paths ("./") in the output. This is useful when delivering HTML reports to others, as it ensures that file paths are relative and portable across different systems.
+
+{phang}
+{opt wpath(string)} specifies a web URL (e.g., "https://example.com/project/") to replace the local path specified in {opt rpath()}. If {opt wpath()} is not specified, {opt rpath()} is replaced with "./". This is useful for publishing reports to the web where local paths need to be converted to online URLs.
+
+{phang}
+{opt clean} specifies that the output Markdown file should only contain lines starting with headers ({bf:#}), HTML iframes ({bf:<iframe}), or HTML images ({bf:<img}). This is useful for creating a summary or index file that selectively displays content.
 
 
 {marker examples}{...}
