@@ -14,7 +14,7 @@ set linesize 120
 
 // adopath ++ C:\Users\kerry\Desktop\auto-mini\ado
 // Project paths
-global project "C:\Users\kerry\Desktop/auto-mini"
+global project "C:/Users/kerry/Desktop/auto-mini"
 global results "$project/results"
 global figures "$results/figures"
 global logs    "$results"
@@ -127,7 +127,7 @@ capture log close
 Report Generation
 ----------------------------------*/
 
-
-markdown2  "$logs/auto-mini.md", saving("$results/auto-mini2.md") replace html($results/auto-mini.html)
+// clean rpath in html links
+markdown2  "$logs/auto-mini.md", saving("$results/auto-mini2.md") replace html($results/auto-mini.html) rpath($results)
 // Open HTML in default browser (Windows)
 sopen  "$results/auto-mini.html"

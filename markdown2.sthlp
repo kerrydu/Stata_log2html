@@ -33,6 +33,7 @@
 {synopt :{opt html(htmlfile)}}specify the final HTML output file{p_end}
 {synopt :{opt rep:lace}}overwrite existing output files{p_end}
 {synopt :{opt css(url)}}specify custom CSS file for HTML styling{p_end}
+{synopt :{opt rpath(string)}}specify the base path to convert absolute paths to relative{p_end}
 {synoptline}
 {p2colreset}{...}
 {p 4 6 2}
@@ -70,6 +71,9 @@ The command performs the following tasks:
 
 {phang}
 {opt css(url)} allows you to specify a custom CSS stylesheet for the HTML output. If not specified, a default clean style is applied.
+
+{phang}
+{opt rpath(string)} specifies the base directory path that should be converted to relative paths ("./") in the output. This is useful when delivering HTML reports to others, as it ensures that file paths are relative and portable across different systems.
 
 
 {marker examples}{...}
