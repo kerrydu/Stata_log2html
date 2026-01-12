@@ -12,12 +12,12 @@ clear
 set more off
 set linesize 120
 
-
+adopath ++ C:\Users\kerry\Desktop\auto-mini\ado
 // Project paths
 global project "C:/Users/kerry/Desktop/auto-mini"
 global results "$project/results"
 global figures "$results/figures"
-global logs    "$results/logs"
+global logs    "$results/results"
 
 // Create output directories
 foreach dir in "$results" "$figures" "$logs" {
@@ -26,7 +26,7 @@ foreach dir in "$results" "$figures" "$logs" {
 capture log close
 log using "$logs/auto-mini.md", replace text
 
-statacell 0
+statacell 
 
 /*---------------------------------
 Data: sysuse auto
