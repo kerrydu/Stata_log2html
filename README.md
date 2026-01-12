@@ -41,6 +41,9 @@ This package includes several commands to streamline Stata workflows:
 - **`statacell`**: Processes and formats Stata output cells for HTML display.
   - Syntax: `statacell [options]`
 
+- **`sopen`**: Opens directories, documents, applications, or URLs from within Stata for quick access.
+  - Syntax: `sopen [path|filename|application|url]`
+
 - **`tabhtml`**: Executes a Stata command that generates HTML output and embeds it as an iframe in Markdown.
   - Syntax: `tabhtml [, width(#) height(#) src(filename)] : command`
   - Automatically detects HTML files from commands like `esttab`.
@@ -117,13 +120,16 @@ sysuse auto, clear
 // ... data cleaning ...
 
 // Descriptive stats with logout3
+statacell "### Table 1: Descriptive Statistics"
 logout3, save("$results/descriptives") replace tex html : tabstat price weight mpg, statistics(n mean sd)
 
 // Graphs with graph2md
+statacell "### Figure 1: Price Distribution"
 histogram price
 graph2md, save("$figures/price_hist.png") zoom(30)
 
 // Regressions and tables with tabhtml
+statacell "### Table 2: Regression Results"
 qui regress price mpg weight
 estimates store model1
 tabhtml : esttab model1 using "$results/model.html", replace
@@ -132,7 +138,8 @@ tabhtml : esttab model1 using "$results/model.html", replace
 capture log close
 
 // Generate HTML report
-markdown2 "$logs/report.md", saving("$results/report.html") replace
+markdown2 "$logs/report.md", clean html($results/report.html) replace
+sopen "$results/report.html"
 ```
 
 This workflow transforms Stata's simple text logs into comprehensive, publication-ready reports with embedded multimedia elements.
