@@ -43,7 +43,7 @@ This package includes several commands to streamline Stata workflows:
 
 - **`tabhtml`**: Executes a Stata command that generates HTML output and embeds it as an iframe in Markdown.
   - Syntax: `tabhtml [, width(#) height(#) src(filename)] : command`
-  - Automatically detects HTML files from commands like `outreg2`.
+  - Automatically detects HTML files from commands like `esttab`.
 
 ### Utility Files
 
@@ -136,6 +136,45 @@ markdown2 "$logs/report.md", saving("$results/report.html") replace
 ```
 
 This workflow transforms Stata's simple text logs into comprehensive, publication-ready reports with embedded multimedia elements.
+
+## Examples
+
+### Complete Workflow Example
+
+For a full demonstration of the enhanced logging workflow, refer to `minido-copy.do`. This do-file provides a complete example using the auto dataset, including:
+
+- Project setup with global paths and directory creation.
+- Data loading, cleaning, and variable generation.
+- Descriptive statistics with `logout3` for HTML/TeX output.
+- Graph creation and export with `graph2md`.
+- Multiple regression models with `estimates store`.
+- Table generation using `tabhtml` with `esttab` for embedded HTML iframes.
+- Final report generation with `markdown2`.
+
+#### How to Run the Example
+
+1. **Adjust Paths**: Edit the global paths in `minido-copy.do` to point to your desired output directories.
+   
+   ```stata
+   global project "C:/path/to/your/project"
+   global results "$project/results"
+   global figures "$results/figures"
+   global logs "$results/logs"
+   ```
+
+2. **Execute the Do-File**: Run the script in Stata.
+
+   ```stata
+   do minido-copy.do
+   ```
+
+3. **View Results**: The script will generate:
+   - Markdown log: `$logs/auto-mini.md`
+   - HTML report: `$results/auto-mini.html` (automatically opened in browser)
+   - Figures: PNG files in `$figures/`
+   - Tables: HTML files in `$results/`
+
+This example showcases how the package transforms standard Stata output into a rich, interactive report.
 
 ## Requirements
 
