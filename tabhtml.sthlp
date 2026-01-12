@@ -69,3 +69,19 @@ Using {cmd:src()} if the filename is not detected automatically:{p_end}
 
 {pmore}
 {cmd:. tabhtml, src(custom_output.html) : my_custom_command arguments}
+
+{phang}
+Example with {cmd:esttab} for regression tables:{p_end}
+
+{pmore}
+{cmd:. sysuse auto, clear}
+{break}
+{cmd:. regress price weight mpg}
+{break}
+{cmd:. estimates store model1}
+{break}
+{cmd:. regress price weight mpg foreign}
+{break}
+{cmd:. estimates store model2}
+{break}
+{cmd:. tabhtml : esttab model1 model2 using mymodels.html, replace}
