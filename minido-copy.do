@@ -12,12 +12,12 @@ clear
 set more off
 set linesize 120
 
-adopath ++ C:\Users\kerry\Desktop\auto-mini\ado
+// adopath ++ C:\Users\kerry\Desktop\auto-mini\ado
 // Project paths
-global project "C:/Users/kerry/Desktop/auto-mini"
+global project "./auto-mini"
 global results "$project/results"
 global figures "$results/figures"
-global logs    "$results/results"
+global logs    "$results"
 
 // Create output directories
 foreach dir in "$results" "$figures" "$logs" {
@@ -53,7 +53,7 @@ summarize price mpg weight lprice
 
 //logout, save("$results/descriptives") replace tex : tabstat price weight mpg headroom, statistics(n mean sd min max) columns(statistics)
 
-logout3, save("$results/descriptives") replace tex html : tabstat price weight mpg headroom, statistics(n mean sd min max) columns(statistics) 
+logout3, save("$results/descriptives") replace excel html : tabstat price weight mpg headroom, statistics(n mean sd min max) columns(statistics) 
 
 
 /*--------------------------------
@@ -111,7 +111,7 @@ estimates store model13
 
 tabhtml: esttab model1 model2 model3 model4 model5 model6 model7 model8 model9 model10 model11 model12 model13 using "$results/model.html", replace
 
-outreg3 [model1 model2 model3 model4 model5 model6] using "$results/model2.tex", replace html title(tab2)
+outreg3 [model1 model2 model3 model4 model5 model6] using "$results/model2.doc", replace html title(tab2)
 
 // di `"<iframe src='$results/model.html' width='100%' height='500px' frameBorder='0'></iframe>"'
 
@@ -128,6 +128,6 @@ Report Generation
 ----------------------------------*/
 
 
-markdown2  "$logs/auto-mini.md", saving("$results/auto-mini.md") replace html($results/auto-mini.html)
+markdown2  "$logs/auto-mini.md", saving("$results/auto-mini2.md") replace html($results/auto-mini.html)
 // Open HTML in default browser (Windows)
 sopen  "$results/auto-mini.html"
