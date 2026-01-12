@@ -32,7 +32,7 @@ This package includes several commands to streamline Stata workflows:
 - **`logout3`**: Handles log output processing for HTML conversion.
   - Syntax: `logout3 [options]`
 
-- **`markdown2`**: Processes Markdown files and converts them to HTML or other formats for integration with Stata outputs.
+- **`markdown2`**: Processes Markdown files and converts them to HTML or other formats for integration with Stata outputs. **Key features include path conversion options: `rpath()` converts absolute paths to relative paths ("./") for portability when sharing reports, and `wpath()` replaces local paths with web URLs for online publishing, ensuring links work correctly in web environments. Note: When using `wpath()`, you must upload the generated HTML table files and figure images to the specified web URL location for the links to function properly.**
   - Syntax: `markdown2 [options]`
 
 - **`outreg3`**: Outputs regression results in various formats, including HTML.
