@@ -14,7 +14,7 @@ set linesize 120
 
 // adopath ++ C:\Users\kerry\Desktop\auto-mini\ado
 // Project paths
-global project "./auto-mini"
+global project "C:\Users\kerry\Desktop/auto-mini"
 global results "$project/results"
 global figures "$results/figures"
 global logs    "$results"
