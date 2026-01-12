@@ -53,40 +53,89 @@ This package includes several commands to streamline Stata workflows:
 
 ## Workflow
 
-This package is designed for Markdown-based Stata reporting workflows. A typical workflow might look like this:
+This package enhances Stata's built-in logging capabilities by enabling Markdown-based reporting with embedded HTML elements. Instead of plain text logs, you can generate rich, interactive reports that include formatted tables, graphs, and iframes directly in the log output.
 
-1. **Set up your analysis**: Use standard Stata commands to run regressions, create graphs, etc.
+### How It Enhances Stata Built-in Logs
 
-2. **Generate outputs**:
-   - Use `graph2md` to export graphs and get Markdown links.
-   - Use `tabhtml` with commands like `outreg2` to generate HTML tables embedded in Markdown.
+Stata's standard `log` command produces plain text output. This package extends it by:
 
-3. **Process logs**: Use `logout3` to convert Stata logs to HTML format.
+- **Markdown Formatting**: Logs are saved in Markdown format (`.md`), allowing for headers, lists, and code blocks.
+- **Embedded Graphics**: Use `graph2md` to automatically insert image links into the log.
+- **HTML Tables**: Use `tabhtml` to embed HTML tables (e.g., from `esttab`) as iframes in the Markdown log.
+- **Automated Processing**: Commands like `logout3` convert Stata output to HTML/TeX formats.
+- **Final Report Generation**: Use `markdown2` to convert the Markdown log into a complete HTML report.
 
-4. **Automate with do-files**: Use `minido.do` for batch processing multiple analyses.
+### Typical Workflow (Based on minido-copy.do)
 
-5. **Integrate into reports**: The outputs are formatted for easy inclusion in Markdown documents, which can then be converted to HTML or PDF.
+1. **Setup Project Structure**:
+   - Define global paths for results, figures, and logs.
+   - Create output directories automatically.
 
-### Example Workflow
+2. **Data Preparation**:
+   - Load and clean data (e.g., `sysuse auto, clear`).
+   - Generate new variables and labels.
+
+3. **Descriptive Statistics**:
+   - Run summaries and use `logout3` to export formatted tables in HTML and TeX.
+
+4. **Visualization**:
+   - Create graphs (e.g., histograms, scatter plots).
+   - Use `graph2md` to export graphs and insert Markdown image links into the log.
+
+5. **Modeling**:
+   - Run regressions and store estimates.
+   - Use `tabhtml` with `esttab` to generate HTML tables embedded as iframes in the Markdown log.
+   - Optionally use `outreg3` for additional table formats.
+
+6. **Additional Analysis**:
+   - Generate predictions and more graphs as needed.
+
+7. **Report Generation**:
+   - Close the log.
+   - Use `markdown2` to convert the Markdown log to HTML.
+   - Automatically open the HTML report in the browser.
+
+### Example Workflow Code
 
 ```stata
-// Load data
+// Setup
+global project "path/to/project"
+global results "$project/results"
+global figures "$results/figures"
+global logs "$results/logs"
+
+// Create directories
+foreach dir in "$results" "$figures" "$logs" {
+    capture mkdir `dir'
+}
+
+// Start Markdown log
+log using "$logs/report.md", replace text
+
+// Data and analysis (as in minido-copy.do)
 sysuse auto, clear
+// ... data cleaning ...
 
-// Run analysis
-regress price weight mpg
+// Descriptive stats with logout3
+logout3, save("$results/descriptives") replace tex html : tabstat price weight mpg, statistics(n mean sd)
 
-// Export graph
-graph2md, save(mygraph.png)
+// Graphs with graph2md
+histogram price
+graph2md, save("$figures/price_hist.png") zoom(30)
 
-// Export table as HTML iframe in Markdown
-tabhtml : outreg2 using mytable.html, replace
+// Regressions and tables with tabhtml
+qui regress price mpg weight
+estimates store model1
+tabhtml : esttab model1 using "$results/model.html", replace
 
-// Process log
-logout3
+// Close log
+capture log close
+
+// Generate HTML report
+markdown2 "$logs/report.md", saving("$results/report.html") replace
 ```
 
-The resulting Markdown can be processed by tools like `markdown2` or Pandoc to create final reports.
+This workflow transforms Stata's simple text logs into comprehensive, publication-ready reports with embedded multimedia elements.
 
 ## Requirements
 
