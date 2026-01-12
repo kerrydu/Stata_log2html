@@ -111,7 +111,7 @@ foreach dir in "$results" "$figures" "$logs" {
 
 // Start Markdown log
 log using "$logs/report.md", replace text
-
+statacell
 // Data and analysis (as in minido-copy.do)
 sysuse auto, clear
 // ... data cleaning ...
