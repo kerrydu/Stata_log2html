@@ -32,6 +32,9 @@ This package includes several commands to streamline Stata workflows:
 - **`logout3`**: Handles log output processing for HTML conversion.
   - Syntax: `logout3 [options]`
 
+- **`markdown2`**: Processes Markdown files and converts them to HTML or other formats for integration with Stata outputs.
+  - Syntax: `markdown2 [options]`
+
 - **`outreg3`**: Outputs regression results in various formats, including HTML.
   - Syntax: `outreg3 [options]`
 

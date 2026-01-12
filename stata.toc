@@ -6,6 +6,8 @@ d graph2md.ado
 d graph2md.sthlp
 d logout3.ado
 d logout3.sthlp
+d markdown2.ado
+d markdown2.sthlp
 d minido-copy.do
 d minido.do
 d outreg3.ado
