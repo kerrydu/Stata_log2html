@@ -7,22 +7,6 @@
    - Markdown report
 */
 
-program define statacell 
-args x
-if "`x'" == "0" {
-    disp "``` stata"
-}
-if "`x'" == "1" {
-    disp "```"
-}
-if strpos("`x'","#")>0 {
-    disp "`x'"
-}
-if "`x'" == ""{
-    disp "```"
-}
-end
-
 
 version 17.0
 clear 
@@ -66,26 +50,31 @@ statacell 1
 
 
 statacell "### Descriptive Statistics"
+statacell "#### Table 1"
 statacell 0
 /*------------------------------------
 Descriptive Statistics
 --------------------------------------*/
 summarize price mpg weight lprice
 tabstat price mpg weight, by(foreign) statistics(mean sd min max n) columns(statistics)
+
+logout3, save("$results/descriptives") replace excel html : tabstat price weight mpg headroom, statistics(n mean sd min max) columns(statistics) 
+
 statacell 1
 
 
 statacell "### Figures"
+statacell "#### Figure 1"
 statacell 0
 /*--------------------------------
 Figures
 ----------------------------------*/
 histogram price, normal title("Price distribution")
-graph2md,  replace save( "$figures/price_hist.png")  
-
+graph2md,  replace save( "$figures/price_hist.png")   zoom(30)
+statacell "#### Figure 2"
 twoway (scatter price mpg) (lfit price mpg), ///
     title("Price vs MPG with linear fit") legend(order(1 "Actual" 2 "Fitted"))
-graph2md,  replace save( "$figures/price_mpg.png")  
+graph2md,  replace save( "$figures/price_mpg.png")   zoom(30)
 statacell 1
 
 
@@ -134,8 +123,10 @@ estimates store model12
 qui regress price mpg weight i.foreign, vce(robust)
 estimates store model13
 
+statacell  "#### Table 2"
 tabhtml: esttab model1 model2 model3 model4 model5 model6 model7 model8 model9 model10 model11 model12 model13 using "$results/model.html", replace
 
+statacell  "#### Table 3"
 outreg3 [model*] using "$results/model2.tex", replace html
 
 // statacell 1
@@ -145,6 +136,7 @@ outreg3 [model*] using "$results/model2.tex", replace html
 // statacell 0
 // Optional: predicted values
 predict price_hat, xb
+statacell  "#### Figure 3"
 twoway (scatter price price_hat), ///
     title("Actual vs Predicted (xb)") ///
     xtitle("Actual") ytitle("Predicted")
@@ -160,7 +152,7 @@ Report Generation
 ----------------------------------*/
 
 
-markdown2  "$logs/auto-mini.md", saving("$results/auto-mini.md") replace html($results/auto-mini.html)
+markdown2  "$logs/auto-mini.md", saving("$results/auto-mini.md") replace html($results/auto-mini.html) clean rpath($results) 
 disp "HTML report generated: $results/auto-mini.html"
 
 // Open HTML in default browser (Windows)
