@@ -1,16 +1,18 @@
 
 program define statacell 
-args x
-if "`x'" == "0" {
+version 8.0
+syntax [anything]
+local x `anything'
+if `"`x'"' == "0" {
     disp "``` stata"
 }
-if "`x'" == "1" {
+if `"`x'"' == "1" {
     disp "```"
 }
-if strpos("`x'","#")>0 {
+if strpos(`"`x'"',"#")>0 {
     disp "`x'"
 }
-if "`x'" == ""{
+if `"`x'"' == ""{
     disp "```"
 }
 end
