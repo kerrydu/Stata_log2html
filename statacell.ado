@@ -10,7 +10,8 @@ if `"`x'"' == "1" {
     disp "```"
 }
 if strpos(`"`x'"',"#")>0 {
-    disp "`x'"
+    cap disp `"`x'"'
+    if _rc disp "`x'"
 }
 if `"`x'"' == ""{
     disp "```"
