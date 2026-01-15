@@ -25,10 +25,10 @@ foreach dir in "$results" "$figures" "$logs" {
     capture mkdir `dir'
 }
 capture log close
-log using "$logs/auto-mini.md", replace text
+log using "$logs/auto-mini.md", replace text 
 
-statacell "### Data Preparation"
-statacell 0
+cmdcell ### Data Preparation
+cmdcell 0
 /*---------------------------------
 Data: sysuse auto
 -----------------------------------*/
@@ -46,41 +46,62 @@ gen weightkg = weight*0.453592
 label var lprice   "Log of price"
 label var weightkg "Weight (kg)"
 disp "Variables created: lprice, weightkg"
-statacell 1
+cmdcell 1
 
 
-statacell "### Descriptive Statistics"
-statacell "#### Table 1"
-statacell 0
-/*------------------------------------
-Descriptive Statistics
---------------------------------------*/
+cmdcell ### Descriptive Statistics
+cmdcell #### Table 1
+
+cmdcell 
 summarize price mpg weight lprice
+
 tabstat price mpg weight, by(foreign) statistics(mean sd min max n) columns(statistics)
 
-logout3, save("$results/descriptives") replace excel html : tabstat price weight mpg headroom, statistics(n mean sd min max) columns(statistics) 
+outreg3  using "$results/summary.tex", replace html sum(log)
+cmdcell out
 
-statacell 1
 
 
-statacell "### Figures"
-statacell "#### Figure 1"
-statacell 0
+
+
+cmdcell ### Figures
+cmdcell #### Figure 1
+cmdcell 0
 /*--------------------------------
 Figures
 ----------------------------------*/
 histogram price, normal title("Price distribution")
 graph2md,  replace save( "$figures/price_hist.png")   zoom(30)
-statacell "#### Figure 2"
+cmdcell out
+
+cmdcell #### Figure 2
+cmdcell 0
 twoway (scatter price mpg) (lfit price mpg), ///
     title("Price vs MPG with linear fit") legend(order(1 "Actual" 2 "Fitted"))
 graph2md,  replace save( "$figures/price_mpg.png")   zoom(30)
-statacell 1
+cmdcell out
 
+cmdcell 0
+_textcell /*
+this is a paragraph of text
 
+this is another paragraph of text
 
-statacell "### Regression"
-statacell 0
+this is a third paragraph of text
+
+this is a mathematical expression
+
+$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$
+
+the picture is pretty
+
+![](https://tu.duoduocdn.com/uploads/day_260115/202601150909474420.jpg)
+
+_textcell */
+cmdcell 1
+
+cmdcell ### Regression
+cmdcell 0
 /*--------------------------------
 Regression
 ----------------------------------*/
@@ -122,39 +143,47 @@ estimates store model12
 
 qui regress price mpg weight i.foreign, vce(robust)
 estimates store model13
+cmdcell 1
 
-statacell  "#### Table 2"
+cmdcell #### Table 2
+cmdcell 0
 tabhtml: esttab model1 model2 model3 model4 model5 model6 model7 model8 model9 model10 model11 model12 model13 using "$results/model.html", replace
+cmdcell out
 
-statacell  "#### Table 3"
+cmdcell #### Table 3
+cmdcell 
 outreg3 [model*] using "$results/model2.tex", replace html
+cmdcell out
+// cmdcell 1
 
-// statacell 1
 
-// di `"<iframe src='$results/model.html' width='100%' height='500px' frameBorder='0'></iframe>"'
 
-// statacell 0
+// cmdcell 0
 // Optional: predicted values
+cmdcell #### Figure 3
+cmdcell 0
 predict price_hat, xb
-statacell  "#### Figure 3"
 twoway (scatter price price_hat), ///
     title("Actual vs Predicted (xb)") ///
     xtitle("Actual") ytitle("Predicted")
 graph2md,  replace save( "$figures/actual_vs_pred.png") zoom(30)
-statacell 1
+cmdcell out
 
 
 capture log close
-// statacell 0
-
-/*--------------------------------
-Report Generation
-----------------------------------*/
 
 
-markdown2  "$logs/auto-mini.md", saving("$results/auto-mini.md") replace html($results/auto-mini.html) clean rpath($results) 
+cmdcell ### Report Generation
+cmdcell 0
+markdown2  "$logs/auto-mini.md",  replace ///
+    html("$results/auto-mini.html") rpath("$results") ///
+    css(githubstyle) sav("$results/auto-mini-clean.md")
+
+// markdown2  "$logs/auto-mini.md",  replace ///
+//     html("$results/auto-mini.html") rpath("$results") ///
+//     cleancode(C:\Users\kerry\Desktop\auto-mini\Stata_log2html\minido.do) ///
+//     css(githubstyle) sav("$results/auto-mini-clean.md")
 disp "HTML report generated: $results/auto-mini.html"
-
 // Open HTML in default browser (Windows)
-sopen "" "$results/auto-mini.html"
-// statacell 1
+sopen  "$results/auto-mini.html"
+cmdcell 1

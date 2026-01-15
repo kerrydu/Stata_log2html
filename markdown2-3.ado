@@ -69,7 +69,7 @@ program define markdown2
     local repl = ("`replace'" != "")
     mata: rewrite_md(`"`infile'"', `"`outfile'"', `repl', `"`rpath'"', `"`llp'"')
 
-    di as text "% cleaned markdown written to " "`outfile'"
+    di as text "% cleaned markdown written to" "`outfile'"
 
     // Optional: regenerate HTML from cleaned markdown
     if "`html'" != "" {
@@ -81,7 +81,6 @@ program define markdown2
             local css_dest "`html_dir'/css/github.css"
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
-            mata: inject_mathjax(`"`html'"')
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -177,7 +176,6 @@ program define cleancode
             local css_dest "`html_dir'/css/github.css"
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
-            mata: inject_mathjax(`"`html'"')
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -258,7 +256,7 @@ program define mclean
 
     local repl = ("`replace'" != "")
     mata: rewrite_md2(`"`infile'"', `"`outfile'"', `repl', `"`rpath'"', `"`llp'"')
-    di as text "% cleaned markdown written to " `"`outfile'"'
+    di as text "% cleaned markdown written to" `"`outfile'"'
 
         // Optional: regenerate HTML from cleaned markdown
     if "`html'" != "" {
@@ -270,7 +268,6 @@ program define mclean
             local css_dest "`html_dir'/css/github.css"
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
-            mata: inject_mathjax(`"`html'"')
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -453,16 +450,10 @@ void function rewrite_md(string scalar ofi, string scalar tfi, real scalar repla
     // 3. 移除前缀
     prefixes = (">", "{com}", "{res}", "{txt}")
     fcon = remove_prefix_and_trim(fcon, prefixes)
-
-    // 3b. 去除 textcell 内部的 >
-    fcon = clean_textcell_content(fcon)
     
     // 4. 过滤掉包含 "cmdcell" 的行
-
     fcon = select(fcon, ustrpos(fcon, ". cmdcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, ". _textcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, "._textcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, "_textcell") :!= 1)
+    
     // 5. 去除空行
     fcon = select(fcon, strtrim(fcon) :!= ".")
 
@@ -488,7 +479,7 @@ void function rewrite_md(string scalar ofi, string scalar tfi, real scalar repla
     
     // 7. （可选）过滤短代码块
     fconlen = char_lengths_including_backticks(fcon)
-    fcon = select(fcon, !(fconlen :< 3))
+    fcon = select(fcon, !(fconlen :< 2))
     
     // 8. 输出
     //printf(strofreal(replace))
@@ -513,9 +504,6 @@ void function rewrite_md2(string scalar ofi, string scalar tfi, real scalar repl
     // 3. 移除前缀
     prefixes = (">", "{com}", "{res}", "{txt}")
     fcon = remove_prefix_and_trim(fcon, prefixes)
-    
-    // 3b. 去除 textcell 内部的 >
-    fcon = clean_textcell_content(fcon)
     
     // 4. 
     fcon_trim = ustrltrim(fcon)
@@ -679,18 +667,14 @@ string colvector insert_backtick_before_hash(string colvector fcon)
 {
     n = rows(fcon)
     if (n == 0) return(J(0, 1, ""))
-    
-    // Estimate max iterations based on potential markers
-    fcon_trim_init = ustrltrim(fcon)
-    is_hash_init = (substr(fcon_trim_init, 1, 1) :== "#")
-    is_hash_init = is_hash_init :| (substr(fcon_trim_init, 1, strlen("<iframe")) :== "<iframe") 
-    is_hash_init = is_hash_init :| (substr(fcon_trim_init, 1, strlen("<img")) :== "<img")
-    is_hash_init = is_hash_init :| (usubstr(fcon_trim_init, 1, 9) :== "_textcell")
+
+    fcon_trim = ustrltrim(fcon)
+    is_hash = (substr(fcon_trim, 1, 1) :== "#")
+    is_hash = is_hash :+ (substr(fcon_trim, 1, strlen("<iframe")) :== "<iframe") 
+    is_hash = is_hash :+ (substr(fcon_trim, 1, strlen("<img")) :== "<img")
 
     // 动态修复：每次插入后重新计算 count_before
-    max_iter = sum(is_hash_init) + 50
-    if (max_iter < 100) max_iter = 100
-    
+    max_iter = 500*(500>sum(is_hash)) + sum(is_hash)*(500<=sum(is_hash))
     iter = 0
     changed = 1
 
@@ -699,91 +683,34 @@ string colvector insert_backtick_before_hash(string colvector fcon)
 
         count_before = cumcount_backtick3(fcon)
 
+        // 判断每行是否以 "#" / <iframe / <img 开头（忽略前导空格）
         fcon_trim = ustrltrim(fcon)
-        
-        // Base checks
         is_hash = (substr(fcon_trim, 1, 1) :== "#")
-        is_hash = is_hash :| (substr(fcon_trim, 1, strlen("<iframe")) :== "<iframe") 
-        is_hash = is_hash :| (substr(fcon_trim, 1, strlen("<img")) :== "<img")
-        
-        // Robust textcell checks
-        is_tc_start_vec = J(rows(fcon), 1, 0)
-        is_tc_end_vec   = J(rows(fcon), 1, 0)
-        
-        // Check for lines starting with _textcell
-        cand_idx = selectindex(usubstr(fcon_trim, 1, 9) :== "_textcell")
-        if (rows(cand_idx) > 0) {
-            rem_vec = ustrltrim(usubstr(fcon_trim[cand_idx], 10, .))
-            
-            // Check /*
-            match_start = (usubstr(rem_vec, 1, 2) :== "/*")
-            idx_start = cand_idx[selectindex(match_start)]
-            if (rows(idx_start)>0) is_tc_start_vec[idx_start] = 1
-            
-            // Check */
-            match_end = (usubstr(rem_vec, 1, 2) :== "*/")
-            idx_end = cand_idx[selectindex(match_end)]
-            if (rows(idx_end)>0) is_tc_end_vec[idx_end] = 1
-        }
-        
-        is_hash = is_hash :| is_tc_start_vec
-               
-        // 条件：是 # 行 且 count_before 为奇数 => 插入 BEFORE (Close code block)
-        need_insert_before = is_hash :& (mod(count_before, 2) :== 1)
-        
-        // 条件：是 _textcell */ 且 count_before 为奇数 => 插入 AFTER (Re-open code block)
-        // 注意：只有当 textcell 确实嵌在代码块里时（count=odd）才需要操作。
-        // 如果 textcell 本就在外（count=even），则不需要任何操作（User Case）。
-        need_insert_after = is_tc_end_vec :& (mod(count_before, 2) :== 1)
+        is_hash = is_hash :+ (substr(fcon_trim, 1, strlen("<iframe")) :== "<iframe") 
+        is_hash = is_hash :+ (substr(fcon_trim, 1, strlen("<img")) :== "<img")
 
-        changed = (sum(need_insert_before) + sum(need_insert_after) > 0)
+        // 条件：是 # 行 且 count_before 为奇数
+        need_insert = is_hash :& (mod(count_before, 2) :== 1)
+        changed = (sum(need_insert) > 0)
 
         if (!changed) break
 
+        // 预分配足够空间（最坏情况：每行都插入，总长 ≤ 2*n）
         result = J(0, 1, "")
-        n_current = rows(fcon)
 
-        for (i = 1; i <= n_current; i++) {
-            if (need_insert_before[i]) {
+        for (i = 1; i <= n; i++) {
+            if (need_insert[i]) {
                 result = result \ "```"   // 插入关闭代码块
             }
             result = result \ fcon[i]
-            if (need_insert_after[i]) {
-                result = result \ "```"   // 插入（重新）打开代码块
-            }
         }
 
         fcon = result
+        n = rows(fcon)
     }
 
     if (iter >= max_iter) {
         printf("{err}Warning: reached max iterations (%g) in insert_backtick_before_hash\n", max_iter)
-    }
-
-    // 清理 textcell 标记 (Robust removal)
-    // We already know how to identify them, let's just strip them
-    n = rows(fcon)
-    fcon_trim = ustrltrim(fcon)
-    cand_idx = selectindex(usubstr(fcon_trim, 1, 9) :== "_textcell")
-    
-    if (rows(cand_idx) > 0) {
-        for (k=1; k<=rows(cand_idx); k++) {
-            idx = cand_idx[k]
-            line = fcon_trim[idx]
-            rem = ustrltrim(usubstr(line, 10, .))
-            
-            // if it is start: remove "_textcell" + spaces + "/*"
-            if (usubstr(rem, 1, 2) == "/*") {
-                // replace with remaining content after /*
-                // if line was "_textcell /* content", new line is " content" 
-                // or should it be empty? "replace with empty" -> remove the tag.
-                // Assuming "content" starts after "/*".
-                fcon[idx] = usubstr(rem, 3, .) 
-            }
-            else if (usubstr(rem, 1, 2) == "*/") {
-                fcon[idx] = usubstr(rem, 3, .)
-            }
-        }
     }
 
     return(fcon)
@@ -864,8 +791,6 @@ void function merge_cmdlog_blocks(string scalar clean_md, string scalar cmdlog_m
     // 3. 合并输出
     result = J(0, 1, "")
     in_block = 0
-    in_tc = 0
-    nested_tc = 0
 
     for (i = 1; i <= n_cmd; i++) {
         line = cmd[i]
@@ -875,24 +800,6 @@ void function merge_cmdlog_blocks(string scalar clean_md, string scalar cmdlog_m
         // if (substr(line_trim, 1, 1) :== ".") {
         //     line_trim = ustrtrim(substr(line_trim, 2, .))
         // }
-        
-        // Robust textcell detection
-        tc_start = 0
-        tc_end = 0
-        if (ustrpos(line_trim, "_textcell") == 1) {
-             rem = ustrltrim(usubstr(line_trim, 10, .))
-             if (ustrpos(rem, "/*") == 1) tc_start = 1
-             if (ustrpos(rem, "*/") == 1) tc_end = 1
-        }
-
-        if (tc_start) {
-            if (in_tc) {
-                 errprintf("Error: nested or repeated _textcell start at line %g: %s\n", i, line)
-                 _error(198)
-            }
-            in_tc = 1
-            if (in_block) nested_tc = 1
-        }
 
         // 处理 cmdcell 标题（cmdcell + # 标题）
         if (substr(line_trim, 1, 7) == "cmdcell") {
@@ -906,12 +813,6 @@ void function merge_cmdlog_blocks(string scalar clean_md, string scalar cmdlog_m
         // 处理 cmdcell 分块（仅 0/1/空/out 有效）
         if (substr(line_trim, 1, strlen("cmdcell")) :== "cmdcell") {
             if (ustrpos(line_trim, "cmdcell out") :== 1) {
-                // Check if nested textcell is still open
-                if (in_tc & nested_tc) {
-                     errprintf("Error: _textcell started inside cmdcell but not closed before cmdcell out at line %g\n", i)
-                     _error(198)
-                }
-
                 if (in_block) {
                     result = result \ "```"
                     in_block = 0
@@ -927,11 +828,6 @@ void function merge_cmdlog_blocks(string scalar clean_md, string scalar cmdlog_m
                     in_block = 1
                 }
                 else {
-                    // Check if nested textcell is still open before closing block
-                    if (in_tc & nested_tc) {
-                         errprintf("Error: _textcell started inside cmdcell but not closed before cmdcell end at line %g\n", i)
-                         _error(198)
-                    }
                     result = result \ "```"
                     in_block = 0
                 }
@@ -940,23 +836,9 @@ void function merge_cmdlog_blocks(string scalar clean_md, string scalar cmdlog_m
         }
 
         // 块内保留命令
-        if (in_block | in_tc) {
+        if (in_block) {
             result = result \ line
         }
-
-        if (tc_end) {
-             if (in_tc == 0) {
-                 errprintf("Error: _textcell end without start at line %g: %s\n", i, line)
-                 _error(198)
-             }
-             in_tc = 0
-             nested_tc = 0 
-        }
-    }
-
-    if (in_tc) {
-        errprintf("Error: _textcell start not closed by end of file\n")
-        _error(198)
     }
 
     // 若末尾未闭合，补上 ```
@@ -1140,103 +1022,8 @@ void function write_github_css(string scalar filepath)
     css = css \ "    max-width: 100%;"
     css = css \ "    box-sizing: border-box;"
     css = css \ "}"
-    css = css \ ""
-    css = css \ "/* MathJax */"
-    css = css \ "mjx-container {"
-    css = css \ "    overflow-x: auto;"
-    css = css \ "    overflow-y: hidden;"
-    css = css \ "}"
 
     mm_outsheet(filepath, css, "replace")
-}
-
-void function inject_mathjax(string scalar htmlfile)
-{
-    lines = cat(htmlfile)
-    if (rows(lines) == 0) return
-
-    // avoid duplicate injection
-    if (sum(ustrpos(lines, "MathJax-script") :> 0) > 0) return
-
-    script =      "<script>" 
-    script = script + "MathJax = {"
-    script = script + "  tex: {"
-    script = script + "    inlineMath: [['$', '$'], ['\\(', '\\)']],"
-    script = script + "    displayMath: [['$$', '$$'], ['\\[', '\\]']]"
-    script = script + "  }"
-    script = script + "};"
-    script = script + "</script>"
-    script = script + "<script id=" + char(34) + "MathJax-script" + char(34) + " async src=" + char(34) + "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" + char(34) + "></script>"
-    
-    idx = selectindex(ustrpos(lines, "</head>") :> 0)
-    if (rows(idx) > 0) {
-        i = idx[1]
-        if (i > 1) {
-            lines = lines[|1 \ i-1|] \ script \ lines[|i \ rows(lines)|]
-        }
-        else {
-            lines = script \ lines
-        }
-    }
-    else {
-        lines = script \ lines
-    }
-
-    mm_outsheet(htmlfile, lines, "replace")
-}
-
-string colvector clean_textcell_content(string colvector lines)
-{
-    n = rows(lines)
-    in_cell = 0
-    
-    for (i = 1; i <= n; i++) {
-        line = lines[i]
-        trim_line = ustrltrim(line)
-        
-        if (!in_cell) {
-             // Check for "_textcell" or ". _textcell"
-             pos = ustrpos(trim_line, "_textcell")
-             is_start = 0
-             if (pos == 1) {
-                 is_start = 1 
-             }
-             else if (pos > 1) {
-                  // check if prefix is "."
-                  prefix = usubstr(trim_line, 1, pos-1)
-                  if (ustrtrim(prefix) == ".") is_start = 1
-             }
-
-             if (is_start) {
-                 if (ustrpos(trim_line, "/*") > 0) {
-                     in_cell = 1
-                     if (ustrpos(trim_line, "*/") > 0) {
-                         in_cell = 0
-                     }
-                 }
-             }
-        } 
-        else {
-             if (substr(trim_line, 1, 1) == ">") {
-                 idx = ustrpos(line, ">")
-                 if (idx > 0) {
-                     pre = usubstr(line, 1, idx-1)
-                     if (ustrtrim(pre) == "") {
-                         rest = usubstr(line, idx+1, .)
-                         if (usubstr(rest, 1, 1) == " ") {
-                             rest = usubstr(rest, 2, .)
-                         }
-                         lines[i] = rest
-                         trim_line = ustrltrim(lines[i])
-                     }
-                 }
-             }
-             if (ustrpos(trim_line, "*/") > 0) {
-                 in_cell = 0
-             }
-        }
-    }
-    return(lines)
 }
 
 end

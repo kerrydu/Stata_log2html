@@ -7498,8 +7498,6 @@ prog define _texout2html, sortpreserve
 	local noborder = ("`border'"!="")
 	local fragment = ("`fragment'"!="")
 	local needline = (!`cborder' & !`noborder')
-	local table_center = ("$table_center"=="1")
-	local table_margin = cond(`table_center', "0 auto", "0")
 	if `cborder' & `noborder' {
 		di in red "may not specify both cellborder and noborder options"
 		exit 198
@@ -7517,28 +7515,17 @@ prog define _texout2html, sortpreserve
 			file write htmlout "<html><head><meta charset='utf-8'>" _n
 		}
 		file write htmlout "<style>" _n
-		file write htmlout ".texout-table{width:auto;min-width:720px;max-width:100%;margin:`table_margin';border-collapse:collapse;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#222;table-layout:auto;}" _n
-		file write htmlout ".texout-table-wrap{width:100%;overflow-x:auto;padding:6px 4px;}" _n
+		file write htmlout ".texout-table{width:100%;border-collapse:collapse;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#222;}" _n
 		if !`noborder' file write htmlout ".texout-table{border-top:2px solid #111;}" _n
 		if `cborder' file write htmlout ".texout-table td,.texout-table th{border:1px solid #d0d0d0;}" _n
-		file write htmlout ".texout-table th{text-align:left;padding:10px 14px;font-weight:600;}" _n
-		file write htmlout ".texout-table td{padding:8px 14px;text-align:left;}" _n
+		file write htmlout ".texout-table th{text-align:left;padding:8px 10px;font-weight:600;}" _n
+		file write htmlout ".texout-table td{padding:6px 10px;text-align:left;}" _n
 		file write htmlout ".texout-table td:first-child,.texout-table th:first-child{text-align:left;}" _n
 		if `needline' file write htmlout ".texout-headline td,.texout-headline th{border-bottom:1px solid #111;}" _n
 		if `needline' file write htmlout ".texout-bottomline td,.texout-bottomline th{border-bottom:2px solid #111;}" _n
 		file write htmlout ".texout-mono{font-family:'Courier New',Consolas,monospace;}" _n
 		if `pretty' file write htmlout ".texout-notes td{font-style:italic;font-size:0.9em;}" _n
 		file write htmlout "</style>" _n
-		file write htmlout "<script>" _n
-		file write htmlout "// inject override css when embedded in iframe" _n
-		file write htmlout "if (window.self !== window.top) {" _n
-		file write htmlout "  var link = document.createElement('link');" _n
-		file write htmlout "  link.rel = 'stylesheet';" _n
-		file write htmlout "  link.href = '/css/table-override.css';" _n
-		file write htmlout "  link.onerror = function () { if (link && link.parentNode) { link.parentNode.removeChild(link); } };" _n
-		file write htmlout "  document.head.appendChild(link);" _n
-		file write htmlout "}" _n
-		file write htmlout "</script>" _n
 		if !`fragment' file write htmlout "</head><body>" _n
 		
 		* title here, before table
@@ -7555,7 +7542,6 @@ prog define _texout2html, sortpreserve
 			file write htmlout "</div>" _n
 		}
 		
-		file write htmlout "<div class='texout-table-wrap'>" _n
 		file write htmlout "<table class='texout-table'>" _n
 
 		if `headBorder'>`titleWide' {
@@ -7642,7 +7628,6 @@ prog define _texout2html, sortpreserve
 			file write htmlout "</tbody>" _n
 		}
 		file write htmlout "</table>" _n
-		file write htmlout "</div>" _n
 		if !`fragment' file write htmlout "</body></html>" _n
 		file close htmlout
 	}

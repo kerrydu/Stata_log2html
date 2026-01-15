@@ -14,16 +14,14 @@ d Note: This package provides tools for Stata workflow automation, including HTM
 
 f graph2md.ado
 f graph2md.sthlp
-f logout3.ado
-f logout3.sthlp
 f markdown2.ado
 f markdown2.sthlp
 f outreg3.ado
 f outreg3.sthlp
-f statacell.ado
-f statacell.sthlp
-f tabhtml.ado
-f tabhtml.sthlp
+f cmdcell.ado
+f cmdcell.sthlp
+f _textcell.ado
+f _textcell.sthlp
 f sopen.ado
 f sopen.sthlp
 
