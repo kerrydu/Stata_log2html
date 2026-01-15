@@ -18,6 +18,8 @@ Or view the video directly: [Stata_log2html.mp4](Stata_log2html.mp4)
 
 ![Demo Video](https://github.com/kerrydu/Stata_log2html/raw/main/Stata_log2html.gif)
 
+[minido运行结果](https://kerrydu.github.io/Stata_log2html/)
+
 
 
 
