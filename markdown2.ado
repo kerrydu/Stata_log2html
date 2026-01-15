@@ -96,7 +96,7 @@ program define markdown2
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
-        di as text "% html regenerated to `html'"
+        // di as text "% html regenerated to `html'"
     }
     else if "`css'" != "" {
         di as error "css() requires html()"
@@ -192,7 +192,7 @@ program define cleancode
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
-        di as text "% html regenerated to `html'"
+        // di as text "% html regenerated to `html'"
     }
     else if "`css'" != "" {
         di as error "css() requires html()"
@@ -285,7 +285,7 @@ program define mclean
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
-        di as text "% html regenerated to `html'"
+        // di as text "% html regenerated to `html'"
     }
     else if "`css'" != "" {
         di as error "css() requires html()"
