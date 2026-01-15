@@ -6,6 +6,15 @@
 
 This package specifically addresses the need to produce readable reports directly from Stata workflow logs without requiring external compilation tools like Jupyter or RMarkdown. It parses the Stata log file to distinguish between code, output, and added narrative, producing high-quality Markdown that can be rendered to HTML with LaTeX math support.
 
+## Key Advantage
+
+The biggest strength of **stata_log2html** is its **Zero-Intrusion** design.
+
+*   **100% Do-file Based**: All operations remain within your standard Stata `.do` files. You don't need to switch to notebooks or external text editors.
+*   **Preserves Workflow**: It does not change how you write or run Stata code. Your analysis logic remains untouched.
+*   **Marker-Based**: Commands like `_textcell` and `cmdcell` act merely as auxiliary markers. They leave structural hints in the log file without interfering with your data or statistics.
+*   **Reproducible**: Since the report is generated every time you run your do-file, your documentation never falls out of sync with your results.
+
 ## Installation
 
 You can install the package directly from the repository or by copying the files to your ADO path.
@@ -13,6 +22,10 @@ You can install the package directly from the repository or by copying the files
 ```stata
 net install stata_log2html, from("https://github.com/kerrydu/Stata_log2html")
 ```
+
+## Workflow Guide
+
+For a detailed guide on how to structure your project and use these tools together, please see [**WORKFLOW.md**](WORKFLOW.md).
 
 ## Included Commands
 
