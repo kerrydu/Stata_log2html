@@ -35,6 +35,7 @@ program define logout3
     }
 
     // --- HTML Mode Implementation ---
+    local keepdta = ("`dta'" != "")
 
     // 1. Ensure save() is handled
     if `"`save'"' == "" {
@@ -115,8 +116,13 @@ program define logout3
     local repopt ""
     if "`replace'" != "" local repopt "replace"
 
+    local nrows = _N
     _logout3_write_html using `"`htmlFile'"', `repopt'
     restore
+
+    if `keepdta' == 0 {
+        capture erase `"`dtaFile'"'
+    }
 
     di as txt `"Output saved to `htmlFile'"'
 
@@ -132,7 +138,7 @@ program define logout3
         local height = $tabheight
     }
     else {
-        local height = 350
+        local height = 80 + `nrows' * 38
     }
     local percent "%"
     local widthstr = string(`width', "%9.0g")
@@ -148,6 +154,9 @@ program define _logout3_write_html
     version 17.0
     syntax using/, [REPLACE]
 
+    local table_center = ("$table_center"=="1")
+    local table_margin = cond(`table_center', "0 auto", "0")
+
     tempname fh
     local repopt = cond("`replace'" != "", "replace", "")
     file open `fh' using `"`using'"', write text `repopt'
@@ -155,14 +164,14 @@ program define _logout3_write_html
     file write `fh' "<html><head><meta charset='utf-8'>" _n
     file write `fh' "<style>" _n
     file write `fh' "body{font-family:'Segoe UI',sans-serif;margin:0;padding:10px;}" _n
-    file write `fh' ".logout-table{border-collapse:collapse;width: 90%;color:#222;margin:0 auto;border-top:2px solid #000;border-bottom:2px solid #000;}" _n
-    file write `fh' ".logout-table th{background:none;font-weight:600;text-align:left;padding:6px 8px;border-bottom:1px solid #000;}" _n
-    file write `fh' ".logout-table td{padding:4px 8px;border-bottom:none;text-align:left;}" _n
-    file write `fh' ".logout-table tbody tr:last-child td{border-bottom:none;}" _n
-    file write `fh' ".logout-mono{font-family:'Courier New',Consolas,monospace;}" _n
+    file write `fh' ".texout-table{width:auto;min-width:720px;max-width:100%;margin:`table_margin';border-collapse:collapse;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#222;table-layout:auto;border-top:2px solid #111;}" _n
+    file write `fh' ".texout-table th{text-align:left;padding:10px 14px;font-weight:600;border-bottom:1px solid #111;}" _n
+    file write `fh' ".texout-table td{padding:8px 14px;text-align:left;}" _n
+    file write `fh' ".texout-table tbody tr:last-child td{border-bottom:2px solid #111;}" _n
+    file write `fh' ".texout-mono{font-family:'Courier New',Consolas,monospace;}" _n
     file write `fh' "</style>" _n
     file write `fh' "</head><body>" _n
-    file write `fh' "<table class='logout-table'>" _n
+    file write `fh' "<table class='texout-table'>" _n
 
     local rows = _N
     qui ds v*
@@ -197,7 +206,7 @@ program define _logout3_write_html
                     local cell = subinstr("`cell'", ">", "&gt;", .)
                     local cell = subinstr("`cell'", char(34), "&quot;", .)
                     if trim("`cell'") == "" local cell = "&nbsp;"
-                    file write `fh' "<td class='logout-mono'>`cell'</td>" _n
+                    file write `fh' "<td class='texout-mono'>`cell'</td>" _n
                 }
                 file write `fh' "</tr>" _n
             }

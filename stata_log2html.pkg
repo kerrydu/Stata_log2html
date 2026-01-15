@@ -26,6 +26,8 @@ f sopen.ado
 f sopen.sthlp
 f tab_md.ado
 f tab_md.sthlp
+f logout3.ado
+f logout3.sthlp
 
 
 f minido-copy.do
