@@ -1,0 +1,139 @@
+/* 表格容器 - 支持横向滚动 */
+.texout-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 8px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* 主表格样式 */
+.texout-table {
+  width: 100%;
+  min-width: 600px; /* 确保在小屏可滚动 */
+  border-collapse: collapse;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* 表头 */
+.texout-table thead th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid #dee2e6;
+  color: #495057;
+}
+
+/* 表格单元格 */
+.texout-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle; /* 图片垂直居中 */
+}
+
+/* 鼠标悬停高亮行（可选） */
+.texout-table tbody tr:hover {
+  background-color: #f8f9ff;
+}
+
+/* 图片样式：圆形头像 or 缩略图 */
+.texout-table .table-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%; /* 圆形 */
+  object-fit: cover;   /* 保证图片比例不拉伸 */
+  border: 1px solid #ddd;
+  display: block;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 如果是方形缩略图（非头像），可注释掉 border-radius */
+/* .texout-table .table-img { border-radius: 4px; } */
+
+/* 状态标签 */
+.texout-table .status {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.texout-table .status.active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+.texout-table .status.offline {
+  background-color: #fce4ec;
+  color: #c2185b;
+}
+
+/* 响应式：在超小屏上缩小内边距 */
+@media (max-width: 480px) {
+  .texout-table th,
+  .texout-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .texout-table .table-img {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+/* simple-code.css */
+.simple-code {
+  position: relative;
+  margin: 16px 0;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family: Consolas, Monaco, 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.simple-code pre {
+  margin: 0;
+  padding: 12px 12px 12px 48px; /* 左边留出行号空间 */
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* 行号 */
+.simple-code::before {
+  content: attr(data-lines);
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 40px;
+  text-align: right;
+  padding-right: 8px;
+  color: #6a6a6a;
+  font-family: monospace;
+  user-select: none;
+}
+
+/* 复制按钮 */
+.simple-code .copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #aaa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.simple-code:hover .copy-btn {
+  opacity: 1;
+}

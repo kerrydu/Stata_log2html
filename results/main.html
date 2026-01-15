@@ -1,0 +1,126 @@
+<script>MathJax = {  tex: {    inlineMath: [['$', '$'], ['\\(', '\\)']],    displayMath: [['$$', '$$'], ['\\[', '\\]']]  }};</script><script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="stylesheet" href="./css/github.css">
+<h3><a href="#data-preparation" id="data-preparation">Data Preparation</a></h3>
+<pre><code>/*---------------------------------
+Data: sysuse auto
+-----------------------------------*/
+* &quot;=== Load and Clean ===&quot;
+sysuse auto, clear
+disp &quot;Loaded auto.dta. Observations: `c(N)', Variables: `c(k)'&quot;
+
+// Minimal cleaning
+drop if missing(price, mpg, weight, foreign)
+disp &quot;Dropped missing. Remaining observations: `c(N)'&quot;
+
+// Generate analysis variables
+gen lprice   = ln(price)
+gen weightkg = weight*0.453592
+label var lprice   &quot;Log of price&quot;
+label var weightkg &quot;Weight (kg)&quot;
+disp &quot;Variables created: lprice, weightkg&quot;
+</code></pre>
+<h3><a href="#descriptive-statistics" id="descriptive-statistics">Descriptive Statistics</a></h3>
+<h4><a href="#table-1" id="table-1">Table 1</a></h4>
+<pre><code>summarize price mpg weight lprice
+
+logout3, save(&quot;$results/figures/mytable&quot;) replace html :  tabstat price mpg weight, ///
+   statistics(mean sd min max n) columns(statistics)
+</code></pre>
+<iframe src='./figures/mytable.html' width='100%' height='232px' frameBorder='0'></iframe>
+<pre><code>outreg3  using &quot;$results/summary.tex&quot;, replace html sum(log)
+</code></pre>
+<iframe src='./summary.html' width='100%' height='600px' frameBorder='0'></iframe>
+<h3><a href="#figures" id="figures">Figures</a></h3>
+<h4><a href="#figure-1" id="figure-1">Figure 1</a></h4>
+<pre><code>/*--------------------------------
+Figures
+----------------------------------*/
+histogram price, normal title(&quot;Price distribution&quot;)
+graph2md,  replace save( &quot;$figures/price_hist.png&quot;)   zoom(30)
+</code></pre>
+<p><img src="./figures/price_hist.png" style="zoom:30%;" /></p>
+<h4><a href="#figure-2" id="figure-2">Figure 2</a></h4>
+<pre><code>twoway (scatter price mpg) (lfit price mpg), ///
+    title(&quot;Price vs MPG with linear fit&quot;) legend(order(1 &quot;Actual&quot; 2 &quot;Fitted&quot;))
+graph2md,  replace save( &quot;$figures/price_mpg.png&quot;)   zoom(30)
+</code></pre>
+<p><img src="./figures/price_mpg.png" style="zoom:30%;" /></p>
+<p>this is a paragraph of text</p>
+<p>this is another paragraph of text</p>
+<p>this is a third paragraph of text</p>
+<p>this is a mathematical expression</p>
+<p>$$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon$$</p>
+<p><del>the picture is pretty</del></p>
+<p><img src="https://tu.duoduocdn.com/uploads/day_260115/202601150909474420.jpg" alt="" /></p>
+<h3><a href="#regression" id="regression">Regression</a></h3>
+<pre><code>/*--------------------------------
+Regression
+----------------------------------*/
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model1
+qui regress price mpg , vce(robust)
+estimates store model2
+
+qui regress price i.foreign, vce(robust)
+estimates store model3
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model4
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model5
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model6
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model7
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model8
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model9
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model10
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model11
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model12
+
+qui regress price mpg weight i.foreign, vce(robust)
+estimates store model13
+</code></pre>
+<h4><a href="#table-2" id="table-2">Table 2</a></h4>
+<pre><code>tabhtml: esttab model1 model2 model3 model4 model5 model6 model7 model8 model9 model10 model11 model12 model13 using &quot;$results/model.html&quot;, replace
+</code></pre>
+<iframe src='./model.html' width='100%' height='500px' frameBorder='0'></iframe>
+<h4><a href="#table-3" id="table-3">Table 3</a></h4>
+<pre><code>outreg3 [model*] using &quot;$results/model2.tex&quot;, replace html
+</code></pre>
+<iframe src='./model2.html' width='100%' height='600px' frameBorder='0'></iframe>
+<h4><a href="#figure-3" id="figure-3">Figure 3</a></h4>
+<pre><code>predict price_hat, xb
+twoway (scatter price price_hat), ///
+    title(&quot;Actual vs Predicted (xb)&quot;) ///
+    xtitle(&quot;Actual&quot;) ytitle(&quot;Predicted&quot;)
+graph2md,  replace save( &quot;$figures/actual_vs_pred.png&quot;) zoom(30)
+</code></pre>
+<p><img src="./figures/actual_vs_pred.png" style="zoom:30%;" /></p>
+<h3><a href="#report-generation" id="report-generation">Report Generation</a></h3>
+<pre><code>// markdown2  &quot;$logs/auto-mini.md&quot;,  replace ///
+//     html(&quot;$results/auto-mini.html&quot;) rpath(&quot;$results&quot;) ///
+//     css(githubstyle) sav(&quot;$results/auto-mini-clean.md&quot;)
+
+markdown2  &quot;$logs/auto-mini.md&quot;,  replace ///
+    html(&quot;$results/auto-mini.html&quot;) rpath(&quot;$results&quot;) ///
+    cleancode(C:\Users\kerry\Desktop\auto-mini\Stata_log2html\minido.do) ///
+    css(githubstyle) sav(&quot;$results/auto-mini-clean.md&quot;)
+disp &quot;HTML report generated: $results/auto-mini.html&quot;
+// Open HTML in default browser (Windows)
+sopen  &quot;$results/auto-mini.html&quot;
+</code></pre>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html><head><meta charset='utf-8'>
+<style>
+.texout-table{width:auto;min-width:720px;max-width:100%;margin:0;border-collapse:collapse;font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#222;table-layout:auto;}
+.texout-table-wrap{width:100%;overflow-x:auto;padding:6px 4px;}
+.texout-table{border-top:2px solid #111;}
+.texout-table th{text-align:left;padding:10px 14px;font-weight:600;}
+.texout-table td{padding:8px 14px;text-align:left;}
+.texout-table td:first-child,.texout-table th:first-child{text-align:left;}
+.texout-headline td,.texout-headline th{border-bottom:1px solid #111;}
+.texout-bottomline td,.texout-bottomline th{border-bottom:2px solid #111;}
+.texout-mono{font-family:'Courier New',Consolas,monospace;}
+</style>
+<script>
+// inject override css when embedded in iframe
+if (window.self !== window.top) {
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '/css/table-override.css';
+  link.onerror = function () { if (link && link.parentNode) { link.parentNode.removeChild(link); } };
+  document.head.appendChild(link);
+}
+</script>
+</head><body>
+<div class='texout-table-wrap'>
+<table class='texout-table'>
+<thead>
+<tr>
+<th>&nbsp;</th>
+<th>(1)</th>
+<th>(2)</th>
+<th>(3)</th>
+<th>(4)</th>
+<th>(5)</th>
+</tr>
+<tr class='texout-headline'>
+<th>VARIABLES</th>
+<th>N</th>
+<th>mean</th>
+<th>sd</th>
+<th>min</th>
+<th>max</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+</tr>
+<tr>
+<td>price</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>6,165</td>
+<td class='texout-mono'>2,949</td>
+<td class='texout-mono'>3,291</td>
+<td class='texout-mono'>15,906</td>
+</tr>
+<tr>
+<td>mpg</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>21.30</td>
+<td class='texout-mono'>5.786</td>
+<td class='texout-mono'>12</td>
+<td class='texout-mono'>41</td>
+</tr>
+<tr>
+<td>rep78</td>
+<td class='texout-mono'>69</td>
+<td class='texout-mono'>3.406</td>
+<td class='texout-mono'>0.990</td>
+<td class='texout-mono'>1</td>
+<td class='texout-mono'>5</td>
+</tr>
+<tr>
+<td>headroom</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>2.993</td>
+<td class='texout-mono'>0.846</td>
+<td class='texout-mono'>1.500</td>
+<td class='texout-mono'>5</td>
+</tr>
+<tr>
+<td>trunk</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>13.76</td>
+<td class='texout-mono'>4.277</td>
+<td class='texout-mono'>5</td>
+<td class='texout-mono'>23</td>
+</tr>
+<tr>
+<td>weight</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>3,019</td>
+<td class='texout-mono'>777.2</td>
+<td class='texout-mono'>1,760</td>
+<td class='texout-mono'>4,840</td>
+</tr>
+<tr>
+<td>length</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>187.9</td>
+<td class='texout-mono'>22.27</td>
+<td class='texout-mono'>142</td>
+<td class='texout-mono'>233</td>
+</tr>
+<tr>
+<td>turn</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>39.65</td>
+<td class='texout-mono'>4.399</td>
+<td class='texout-mono'>31</td>
+<td class='texout-mono'>51</td>
+</tr>
+<tr>
+<td>displacement</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>197.3</td>
+<td class='texout-mono'>91.84</td>
+<td class='texout-mono'>79</td>
+<td class='texout-mono'>425</td>
+</tr>
+<tr>
+<td>gear_ratio</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>3.015</td>
+<td class='texout-mono'>0.456</td>
+<td class='texout-mono'>2.190</td>
+<td class='texout-mono'>3.890</td>
+</tr>
+<tr>
+<td>foreign</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>0.297</td>
+<td class='texout-mono'>0.460</td>
+<td class='texout-mono'>0</td>
+<td class='texout-mono'>1</td>
+</tr>
+<tr>
+<td>lprice</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>8.641</td>
+<td class='texout-mono'>0.392</td>
+<td class='texout-mono'>8.099</td>
+<td class='texout-mono'>9.674</td>
+</tr>
+<tr>
+<td>weightkg</td>
+<td class='texout-mono'>74</td>
+<td class='texout-mono'>1,370</td>
+<td class='texout-mono'>352.5</td>
+<td class='texout-mono'>798.3</td>
+<td class='texout-mono'>2,195</td>
+</tr>
+<tr class='texout-bottomline'>
+<td>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+<td class='texout-mono'>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</body></html>
