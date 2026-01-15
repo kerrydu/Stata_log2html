@@ -82,6 +82,7 @@ program define markdown2
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
             mata: inject_mathjax(`"`html'"')
+            copy "`html_dir'/css/github.css" "`html_dir'/css/table-override.css", replace
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -93,6 +94,7 @@ program define markdown2
             mata: st_local("css_dest_norm", normalize_path(`"`css_dest'"'))
             if `"`css_norm'"' != `"`css_dest_norm'"' {
                 copy `"`css_norm'"' `"`css_dest'"', replace
+                copy `"`css_norm'"' "`html_dir'/css/table-override.css", replace
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
@@ -178,6 +180,7 @@ program define cleancode
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
             mata: inject_mathjax(`"`html'"')
+            copy "`html_dir'/css/github.css" "`html_dir'/css/table-override.css", replace
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -189,6 +192,7 @@ program define cleancode
             mata: st_local("css_dest_norm", normalize_path(`"`css_dest'"'))
             if `"`css_norm'"' != `"`css_dest_norm'"' {
                 copy `"`css_norm'"' `"`css_dest'"', replace
+                copy `"`css_norm'"' "`html_dir'/css/override.css", replace
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
@@ -271,6 +275,7 @@ program define mclean
             mata: write_github_css(`"`css_dest'"')
             mata: inject_css(`"`html'"', "./css/github.css")
             mata: inject_mathjax(`"`html'"')
+            copy "`html_dir'/css/github.css" "`html_dir'/css/table-override.css", replace
         }
         else if "`css'" != "" {
             mata: st_local("css_base", pathbasename(`"`css'"'))
@@ -282,6 +287,7 @@ program define mclean
             mata: st_local("css_dest_norm", normalize_path(`"`css_dest'"'))
             if `"`css_norm'"' != `"`css_dest_norm'"' {
                 copy `"`css_norm'"' `"`css_dest'"', replace
+                copy `"`css_norm'"' "`html_dir'/css/table-override.css", replace
             }
             mata: inject_css(`"`html'"', "./css/`css_base'")
         }
