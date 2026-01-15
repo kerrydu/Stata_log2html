@@ -6,6 +6,16 @@
 
 This package specifically addresses the need to produce readable reports directly from Stata workflow logs without requiring external compilation tools like Jupyter or RMarkdown. It parses the Stata log file to distinguish between code, output, and added narrative, producing high-quality Markdown that can be rendered to HTML with LaTeX math support.
 
+## Demo Video
+
+Watch a demonstration of the stata_log2html workflow:
+
+[![Demo Video](https://img.shields.io/badge/▶-Watch%20Demo%20Video-blue)](https://github.com/kerrydu/Stata_log2html/raw/main/Stata_log2html.mp4)
+
+Or view the video directly: [Stata_log2html.mp4](Stata_log2html.mp4)
+
+*Note: Click the link above to view the video, or download it from the repository root.*
+
 ## Key Advantage
 
 The biggest strength of **stata_log2html** is its **Zero-Intrusion** design.
