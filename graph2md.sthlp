@@ -78,7 +78,15 @@ This command eliminates the need to manually copy image paths into your Markdown
 {it:graph_export_options} are passed directly to {cmd:graph export}. Common options include {cmd:replace}, {cmd:width()}, and {cmd:height()}.
 
 
+{marker remarks}{...}
+{title:Remarks}
+
+{pstd}
+After using {cmd:graph2md}, it is highly recommended to issue the command {cmd:cmdcell out} .
+This ensures that the inserted image code is placed correctly outside of the Stata code blocks in the final Markdown document.
+
 {marker examples}{...}
+
 {title:Examples}
 
 {pstd}

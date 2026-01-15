@@ -75,7 +75,15 @@ While retaining the core functionality of arranging regression outputs into illu
 {opt dec(#)} and other formatting options behave identically to {cmd:outreg2}.
 
 
+{marker remarks}{...}
+{title:Remarks}
+
+{pstd}
+When using {cmd:outreg3} with the {opt html} option for Markdown reporting, it is highly recommended to follow the command with {cmd:cmdcell out}.
+This ensures that the table embedding code is placed outside of Stata code blocks, allowing the table to render correctly in the browser.
+
 {marker examples}{...}
+
 {title:Examples}
 
 {pstd}

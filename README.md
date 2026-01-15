@@ -42,7 +42,7 @@ The package consists of the following tools:
 * **`graph2md`**: Exports the current graph to PNG and automatically inserts the Markdown image syntax into the log.
 * **`outreg3`**: Enhances regression table exports for direct compatibility with the Markdown output.
 * **`_textcell`**: Allows insertion of blocks of raw text, Markdown, or LaTeX math (e.g., `$$ y = mx + b $$`) directly from the do-file into the final report.
-* **`cmdcell`**: Provides manual control over Markdown code fences (start/end code blocks) and header insertion (e.g., `### Header`) within the log.
+* **`cmdcell`**: Provides manual control over Markdown code fences (start/end code blocks) and header insertion (e.g., `### Header`) within the log. Use `cmdcell out` after `outreg3` or `graph2md` to ensure correct rendering.
 
 ### Utilities
 * **`sopen`**: Convenience command to open the generated HTML or Markdown files in the system's default viewer.
@@ -69,10 +69,12 @@ regress price mpg
 
 * 4. Export table
 outreg3 using "reg_table.tex", replace html
+cmdcell out
 
 * 5. Export figure
 histogram price
 graph2md, save("hist.png")
+cmdcell out
 
 * 6. Close log and convert
 capture log close

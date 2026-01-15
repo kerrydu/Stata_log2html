@@ -23,6 +23,7 @@
 {synoptline}
 {synopt:{opt 1} | {opt begin}}Insert a code fence {bf:```}. Used to start a code block.{p_end}
 {synopt:{opt 0} | {opt end}}Insert a code fence {bf:```}. Used to end a code block.{p_end}
+{synopt:{opt out}} specify inserting generating table or figure.{p_end}
 {synopt:{it:empty}}Insert a code fence {bf:```}.{p_end}
 {synopt:{bf:#} {it:text}}Insert a Markdown header (e.g., {bf:# Header}).{p_end}
 {synoptline}

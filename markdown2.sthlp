@@ -74,7 +74,16 @@ It also injects MathJax scripts for rendering LaTeX equations (e.g., `$$ y = x^2
 {opt rpath(path)} and {opt wpath(url)} are used for path rewriting, typically for images.
 If your log contains local absolute paths (e.g., `C:/Project/fig.png`), you can use these options to rewrite them to relative web paths (e.g., `./images/fig.png`) for proper rendering in the HTML.
 
+{marker remarks}{...}
+{title:Remarks}
+
+{pstd}
+To ensure figures and tables are rendered correctly (and not displayed as raw code), 
+commands like {help graph2md} and {help outreg3} should be followed by {cmd:cmdcell out}.
+This explicitly closes the code block relative to the Markdown parser.
+
 {marker examples}{...}
+
 {title:Examples}
 
 {pstd}
