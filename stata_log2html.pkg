@@ -24,6 +24,8 @@ f _textcell.ado
 f _textcell.sthlp
 f sopen.ado
 f sopen.sthlp
+f tab_md.ado
+f tab_md.sthlp
 
 
 f minido-copy.do
