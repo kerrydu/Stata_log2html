@@ -57,12 +57,19 @@ The package consists of the following tools:
 
 ### Output Helpers
 * **`graph2md`**: Exports the current graph to PNG and automatically inserts the Markdown image syntax into the log.
-* **`outreg3`**: Enhances regression table exports for direct compatibility with the Markdown output.
+* **`outreg3`** **`logout3`**: Enhances regression table exports for direct compatibility with the Markdown output.
+* **`logout4`**: logout results and converts it to html.
 * **`_textcell`**: Allows insertion of blocks of raw text, Markdown, or LaTeX math (e.g., `$$ y = mx + b $$`) directly from the do-file into the final report.
 * **`cmdcell`**: Provides manual control over Markdown code fences (start/end code blocks) and header insertion (e.g., `### Header`) within the log. Use `cmdcell out` after `outreg3` or `graph2md` to ensure correct rendering.
 
 ### Utilities
 * **`sopen`**: Convenience command to open the generated HTML or Markdown files in the system's default viewer.
+
+### Three Usage Modes
+1. Detailed Mode: Captures all Stata output, including console logs, exported HTML tables, and generated figures.
+2. Clean Mode: Outputs only titles, textual content, and visual charts.
+3. Clean Code Mode: Delivers titles, textual content, charts and code blocks, while excluding console output results.
+
 
 ## Minimal Example
 
