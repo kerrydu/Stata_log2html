@@ -53,3 +53,181 @@
 4.  **一键发布** (`markdown2` 生成最终 HTML)
 
 这种方式极大地提高了科研和数据分析工作的透明度与可重复性，同时也大幅降低了撰写分析报告的排版时间成本。
+
+
+----
+
+
+----
+# more instructions step by step
+## 从最简单例子出发
+
+```
+* 1. Start a log
+log using "report.md", replace text
+* 2. Add one cmdcell to the log
+cmdcell
+* 3. do as you normally would
+    sysuse auto, clear
+    summarize price mpg
+    scatter price mpg
+    regress price mpg
+* 4. Close log and convert
+capture log close
+markdown2 "report.md", replace html("report.html") css(githubstyle)
+```
+
+## do some more: add title and text
+
+```
+* 1. Start a log
+    log using "report.md", replace text
+* 2 add title
+     cmdcell # A Simple Report
+* 3. Add one cmdcell to the log
+     cmdcell
+* 4. do as you normally would
+    sysuse auto, clear
+*  5. add title for next section
+    cmdcell ## Data Summary
+    summarize price mpg
+*  6. add title for next section
+    cmdcell ## Scatter Plot
+    scatter price mpg
+*  7. add title for next section
+    cmdcell ## Regression Analysis    
+    regress price mpg
+*  8. add text
+    _textcell /*
+    Price is the dependent variable. MPG is the independent variable.
+    
+    The regression model is:
+    $$ \text{price} = \beta_0 + \beta_1 \text{mpg} + \epsilon $$ 
+    
+    The regression analysis shows that the coefficient for MPG is -0.01, which means that for every one unit increase in MPG, the price decreases by .01.
+
+    Regression results show that the relationship between price and MPG is positive, but not very strong.
+    _textcell */
+*   9. Close log and convert
+capture log close
+markdown2 "report.md", replace html("report.html") css(githubstyle)
+```
+
+## do some more: enbodied tables and figures
+```
+* 1. Start a log
+    log using "report.md", replace text
+* 2 add title
+     cmdcell # A Simple Report
+* 3. Add one cmdcell to the log
+     cmdcell
+* 4. do as you normally would
+    sysuse auto, clear
+*  5. add title for next section
+    cmdcell ## Data Summary
+    logout4, save(./summary) html replace: summarize price mpg
+*  6. add title for next section
+    cmdcell ## Scatter Plot
+    scatter price mpg
+    graph2md, save("./scatter.png")
+*  7. add title for next section
+    cmdcell ## Regression Analysis    
+    regress price mpg
+    outreg3 using "./reg_table.tex", replace html
+*  8. add text
+    _textcell /*
+    Price is the dependent variable. MPG is the independent variable.
+    
+    The regression model is:
+    $$ \text{price} = \beta_0 + \beta_1 \text{mpg} + \epsilon $$ 
+    
+    The regression analysis shows that the coefficient for MPG is -0.01, which means that for every one unit increase in MPG, the price decreases by .01.
+
+    Regression results show that the relationship between price and MPG is positive, but not very strong.
+    _textcell */
+*   9. Close log and convert
+capture log close
+markdown2 "report.md", replace html("report.html") css(githubstyle)
+```
+
+## use clean mode
+
+```
+* 1. Start a log
+    log using "report.md", replace text
+* 2 add title
+     cmdcell # A Simple Report
+* 3. Add one cmdcell to the log
+     cmdcell
+* 4. do as you normally would
+    sysuse auto, clear
+*  5. add title for next section
+    cmdcell ## Data Summary
+    logout4, save(./summary) html replace: summarize price mpg
+*  6. add title for next section
+    cmdcell ## Scatter Plot
+    scatter price mpg
+    graph2md, save("./scatter.png")
+*  7. add title for next section
+    cmdcell ## Regression Analysis    
+    regress price mpg
+    outreg3 using "./reg_table.tex", replace html
+*  8. add text
+    _textcell /*
+    Price is the dependent variable. MPG is the independent variable.
+    
+    The regression model is:
+    $$ \text{price} = \beta_0 + \beta_1 \text{mpg} + \epsilon $$ 
+    
+    The regression analysis shows that the coefficient for MPG is -0.01, which means that for every one unit increase in MPG, the price decreases by .01.
+
+    Regression results show that the relationship between price and MPG is positive, but not very strong.
+    _textcell */
+*   9. Close log and convert
+capture log close
+markdown2 "report.md", clean replace html("report.html") css(githubstyle)
+```
+## use cleancode mode
+
+```
+* 1. Start a log
+    log using "report.md", replace text
+* 2 add title
+     cmdcell # A Simple Report
+* 3. Add one cmdcell to the log
+     cmdcell 0
+* 4. do as you normally would
+    sysuse auto, clear
+    cmdcell ## Data Summary
+    logout4, save(./summary) html replace: summarize price mpg
+    * cmdcell out to insert lougout4 output
+    cmdcell out
+*  6. add title for next section
+    cmdcell ## Scatter Plot
+    cmdcell
+    scatter price mpg
+    graph2md, save("./scatter.png")
+    * cmdcell out to insert scatter.png
+    cmdcell out
+*  7. add title for next section
+    cmdcell ## Regression Analysis   
+    cmdcell 
+    regress price mpg
+    outreg3 using "./reg_table.tex", replace html
+    * cmdcell out to insert reg_table.html
+    cmdcell out
+*  8. add text
+    _textcell /*
+    Price is the dependent variable. MPG is the independent variable.
+    
+    The regression model is:
+    $$ \text{price} = \beta_0 + \beta_1 \text{mpg} + \epsilon $$ 
+    
+    The regression analysis shows that the coefficient for MPG is -0.01, which means that for every one unit increase in MPG, the price decreases by .01.
+
+    Regression results show that the relationship between price and MPG is positive, but not very strong.
+    _textcell */
+*   9. Close log and convert
+capture log close
+markdown2 "report.md", cleancode(./example.do) replace html("report.html") css(githubstyle)
+```

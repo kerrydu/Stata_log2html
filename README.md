@@ -66,9 +66,9 @@ The package consists of the following tools:
 * **`sopen`**: Convenience command to open the generated HTML or Markdown files in the system's default viewer.
 
 ### Three Usage Modes
-1. Detailed Mode: Captures all Stata output, including console logs, exported HTML tables, and generated figures.
-2. Clean Mode: Outputs only titles, textual content, and visual charts.
-3. Clean Code Mode: Delivers titles, textual content, charts and code blocks, while excluding console output results.
+1. Detailed Mode: Captures all Stata output, including console logs, exported HTML tables, and generated figures. (example_detailed.do)
+2. Clean Mode: Outputs only titles, textual content, and visual charts. (example_clean.do)
+3. Clean Code Mode: Delivers titles, textual content, charts and code blocks, while excluding console output results. (example_clean_code.do)
 
 
 ## Minimal Example
