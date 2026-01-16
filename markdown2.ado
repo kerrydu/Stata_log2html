@@ -460,15 +460,15 @@ void function rewrite_md(string scalar ofi, string scalar tfi, real scalar repla
     prefixes = (">", "{com}", "{res}", "{txt}")
     fcon = remove_prefix_and_trim(fcon, prefixes)
 
-    // 3b. 去除 textcell 内部的 >
-    fcon = clean_textcell_content(fcon)
+    // // 3b. 去除 textcell 内部的 >
+    // fcon = clean_textcell_content(fcon)
     
     // 4. 过滤掉包含 "cmdcell" 的行
 
     fcon = select(fcon, ustrpos(fcon, ". cmdcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, ". _textcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, "._textcell") :!= 1)
-    fcon = select(fcon, ustrpos(fcon, "_textcell") :!= 1)
+    // fcon = select(fcon, ustrpos(fcon, ". _textcell") :!= 1)
+    // fcon = select(fcon, ustrpos(fcon, "._textcell") :!= 1)
+    // fcon = select(fcon, ustrpos(fcon, "_textcell") :!= 1)
     // 5. 去除空行
     fcon = select(fcon, strtrim(fcon) :!= ".")
 
@@ -489,8 +489,27 @@ void function rewrite_md(string scalar ofi, string scalar tfi, real scalar repla
         }
     }
 
+    
+    
     // 6. 【核心】动态修复：直到所有 # 行都在代码块外
     fcon = insert_backtick_before_hash(fcon)
+
+    // fcon = select(fcon, ustrpos(fcon, ". _textcell") :!= 1)
+    // fcon = select(fcon, ustrpos(fcon, "._textcell") :!= 1)
+    // fcon_trim = ustrltrim(fcon)
+    fcon = remove_dot_from_textcell(fcon)
+    // fcon_trim
+
+    // 5. 删除特定行_textcell */ 开头的行
+    
+    
+    fcon = clean_textcell_content(fcon)
+    // fcon
+    flag = (strpos(fcon, "_textcell"):== 1)
+    if (sum(flag) > 0) {
+        idx = selectindex(flag)
+        fcon[idx] = J(length(idx),1,"") 
+    }
     
     // 7. （可选）过滤短代码块
     fconlen = char_lengths_including_backticks(fcon)
@@ -519,17 +538,38 @@ void function rewrite_md2(string scalar ofi, string scalar tfi, real scalar repl
     // 3. 移除前缀
     prefixes = (">", "{com}", "{res}", "{txt}")
     fcon = remove_prefix_and_trim(fcon, prefixes)
-    
-    // 3b. 去除 textcell 内部的 >
-    fcon = clean_textcell_content(fcon)
+    // fcon = remove_dot_from_textcell(fcon)
+
+    // // 3b. 去除 textcell 内部的 >
+    // fcon = clean_textcell_content(fcon)
     
     // 4. 
     fcon_trim = ustrltrim(fcon)
     flag = (ustrpos(fcon_trim, "#") :== 1)
     flag = flag :| (ustrpos(fcon_trim, "<img") :== 1)
     flag = flag :| (ustrpos(fcon_trim, "<iframe") :== 1)
-    fcon = select(fcon, flag)
+    // flag = flag :| (ustrpos(fcon_trim, "_textcell") :== 1)
+    flag = flag :| get_textcell_index(fcon_trim)
+    // 增加 textcell 块的识别
+    
 
+
+    fcon = select(fcon, flag)
+    fcon_trim = ustrltrim(fcon)
+    fcon_trim = remove_dot_from_textcell(fcon_trim)
+    // fcon_trim
+
+    // 5. 删除特定行_textcell */ 开头的行
+    
+    
+    fcon = clean_textcell_content(fcon_trim)
+    // fcon
+    flag = (strpos(fcon, "_textcell"):== 1)
+    if (sum(flag) > 0) {
+        idx = selectindex(flag)
+        fcon[idx] = J(length(idx),1,"") 
+    }
+    
     // 4b. 路径替换（仅对 <iframe / <img 行）
     if (strlen(rpath) > 0) {
         fcon_trim = ustrltrim(fcon)
@@ -719,17 +759,16 @@ string colvector insert_backtick_before_hash(string colvector fcon)
         // Check for lines starting with _textcell
         cand_idx = selectindex(usubstr(fcon_trim, 1, 9) :== "_textcell")
         if (rows(cand_idx) > 0) {
-            rem_vec = ustrltrim(usubstr(fcon_trim[cand_idx], 10, .))
-            
-            // Check /*
-            match_start = (usubstr(rem_vec, 1, 2) :== "/*")
-            idx_start = cand_idx[selectindex(match_start)]
-            if (rows(idx_start)>0) is_tc_start_vec[idx_start] = 1
-            
-            // Check */
-            match_end = (usubstr(rem_vec, 1, 2) :== "*/")
-            idx_end = cand_idx[selectindex(match_end)]
-            if (rows(idx_end)>0) is_tc_end_vec[idx_end] = 1
+            for (k=1; k<=rows(cand_idx); k++) {
+                 idx = cand_idx[k]
+                 rem = ustrltrim(usubstr(fcon_trim[idx], 10, .))
+                 if (usubstr(rem, 1, 2) == "/*") {
+                     is_tc_start_vec[idx] = 1
+                 }
+                 if (usubstr(rem, 1, 2) == "*/") {
+                     is_tc_end_vec[idx] = 1
+                 }
+            }
         }
         
         is_hash = is_hash :| is_tc_start_vec
@@ -1189,6 +1228,69 @@ void function inject_mathjax(string scalar htmlfile)
     }
 
     mm_outsheet(htmlfile, lines, "replace")
+}
+
+
+
+string colvector remove_dot_from_textcell(string colvector lines)
+{
+    ri1 = ( substr(ustrltrim(lines), 1, 1) :== ".")
+    lines2 = ustrltrim(substr(ustrltrim(lines), 2, .))
+    ri2 = (strpos(lines2,"_textcell") :== 1)
+    flag = ri1 :& ri2
+    if (sum(flag) > 0) {
+        idx = selectindex(flag)
+        lines[idx] = ustrltrim(substr(lines[idx], 2, .))
+        // lines[idx] = ustrltrim(usubinstr(lines[idx], "_textcell", "", 1))
+    }
+
+    return(lines)
+}
+
+
+real colvector get_textcell_index(string colvector lines)
+{
+    n = rows(lines)
+    idx_vec = J(n, 1, 0)
+    in_cell = 0
+    cell_counter = 0
+    
+    for (i = 1; i <= n; i++) {
+        line = lines[i]
+        trim_line = ustrltrim(line)
+        
+        if (!in_cell) {
+             // Check for "_textcell" or ". _textcell"
+             pos = ustrpos(trim_line, "_textcell")
+             is_start = 0
+             if (pos == 1) {
+                 is_start = 1 
+             }
+             else if (pos > 1) {
+                  // check if prefix is "."
+                  prefix = usubstr(trim_line, 1, pos-1)
+                  if (ustrtrim(prefix) == ".") is_start = 1
+             }
+
+             if (is_start) {
+                 if (ustrpos(trim_line, "/*") > 0) {
+                     cell_counter = cell_counter + 1
+                     in_cell = 1
+                     idx_vec[i] = cell_counter
+                     if (ustrpos(trim_line, "*/") > 0) {
+                         in_cell = 0
+                     }
+                 }
+             }
+        } 
+        else {
+             idx_vec[i] = cell_counter
+             if (ustrpos(trim_line, "*/") > 0) {
+                 in_cell = 0
+             }
+        }
+    }
+    return(idx_vec)
 }
 
 string colvector clean_textcell_content(string colvector lines)

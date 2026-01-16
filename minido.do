@@ -175,14 +175,14 @@ capture log close
 
 cmdcell ### Report Generation
 cmdcell 0
-markdown2  "$logs/auto-mini.md",  replace ///
+markdown2  "$logs/auto-mini.md",  replace clean ///
     html("$results/auto-mini.html") rpath("$results") ///
     css(githubstyle) sav("$results/auto-mini-clean.md")
 
-// markdown2  "$logs/auto-mini.md",  replace ///
-//     html("$results/auto-mini.html") rpath("$results") ///
-//     cleancode(C:\Users\kerry\Desktop\auto-mini\Stata_log2html\minido.do) ///
-//     css(githubstyle) sav("$results/auto-mini-clean.md")
+markdown2  "$logs/auto-mini.md",  replace ///
+    html("$results/auto-mini.html") rpath("$results") ///
+    cleancode(C:\Users\kerry\Desktop\auto-mini\Stata_log2html\minido.do) ///
+    css(githubstyle) sav("$results/auto-mini-clean.md")
 disp "HTML report generated: $results/auto-mini.html"
 // Open HTML in default browser (Windows)
 sopen  "$results/auto-mini.html"
